@@ -7,7 +7,7 @@ class UserBase(BaseModel):
     role: str = "user"
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 class UserUpdate(BaseModel):
     name: Optional[str] = None
@@ -18,3 +18,8 @@ class User(UserBase):
     id: int
     class Config:
         from_attributes = True
+
+class AuthUser(BaseModel):
+    user: User
+    access_token: str
+    token_type: str

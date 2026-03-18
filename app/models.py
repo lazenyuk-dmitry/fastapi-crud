@@ -8,3 +8,4 @@ class UserORM(Base):
     name: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True, index=True)
     role: Mapped[str] = mapped_column(default="user", nullable=False)
+    hashed_password: Mapped[str] = mapped_column(nullable=False)
