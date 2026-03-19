@@ -1,10 +1,7 @@
+import bcrypt
 from datetime import datetime, timedelta, timezone
 from jose import jwt
-from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, HTTPException
-from .models import UserORM
-from .config import settings
-import bcrypt
+from app.config import settings
 
 class AuthHandler:
     @staticmethod
