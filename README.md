@@ -2,6 +2,8 @@
 
 Backend-сервис на базе FastAPI и SQLAlchemy 2.0 для управления пользователями с разделением ролей (Admin/User).
 
+DEMO: https://fastapi-crud-p9i6.onrender.com/docs
+
 ## 🚀 Стек технологий
 
 - Framework: FastAPI
@@ -34,7 +36,25 @@ cd fastapi-crud
 uv sync
 ```
 
-### 3. Запуск сервера
+### 3. Настройте переменные окружения (скопируйте и переименуйте .env.example -> .env)
+
+Можно создать копию командой в терминале
+
+```bash
+# Linux / macOS / Git Bash
+cp .env.example .env
+# В Windows (PowerShell)
+copy .env.example .env
+```
+
+Заполните своими данными
+
+```bash
+DATABASE_URL = "sqlite+aiosqlite:///./data/database.db"
+SECRET_KEY = "super-secret-key"
+```
+
+### 4. Запуск сервера
 
 ```bash
 # for production mode
