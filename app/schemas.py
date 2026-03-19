@@ -31,3 +31,6 @@ class AuthUser(BaseModel):
     user: User
     access_token: str
     token_type: str
+
+class AppResult(BaseModel):
+    message: str
