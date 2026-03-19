@@ -9,7 +9,23 @@ async def lifespan(app: FastAPI):
     yield
     await engine.dispose()
 
-app = FastAPI(title="User Service API", lifespan=lifespan)
+app = FastAPI(
+    title="User Service API",
+    description="""
+        API для управления пользователями и авторизацией.
+
+        ## Возможности:
+        * **Users**: Создание, получение, обновление и удаление (CRUD).
+        * **Auth**: Авторизация через OAuth2 (JWT токен).
+        * **Admin**: Управление статусом `is_active` (бан/разбан).
+    """,
+    version="1.0.0",
+    contact={
+        "name": "Lazenyuk Dmitry",
+        "url": "https://github.com/lazenyuk-dmitry",
+    },
+    lifespan=lifespan,
+)
 
 app.include_router(auth.router)
 app.include_router(users.router)
