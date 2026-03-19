@@ -30,3 +30,7 @@ class OnlyForAdminError(AppError):
 class OnlyForOwnerError(AppError):
     def __init__(self):
         super().__init__(status_code=403, detail="You can only access your own data")
+
+class InactiveUserError(AppError):
+    def __init__(self):
+        super().__init__(status_code=403, detail="User is inactive")

@@ -4,7 +4,7 @@ from app.models import UserORM
 from app.schemas import UserCreate, UserUpdate
 from app.auth import AuthHandler
 from sqlalchemy.exc import IntegrityError
-from app.exceptions import UserAlreadyExistsError, UserNotFoundError
+from app.exceptions import UserAlreadyExistsError, UserNotFoundError, InactiveUserError
 
 class UserService:
     def __init__(self, db: AsyncSession):
@@ -42,9 +42,6 @@ class UserService:
 
     async def update(self, user_id: int, user_data: UserUpdate):
         user = await self.get_one(user_id)
-        if not user:
-            raise UserNotFoundError()
-
         update_data = user_data.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             setattr(user, key, value)
@@ -67,4 +64,14 @@ class UserService:
         user = result.scalar_one_or_none()
         if not user:
             raise UserNotFoundError()
+        if not user.is_active:
+            raise InactiveUserError()
+        return user
+
+    async def set_user_status(self, user_id: int, is_active: bool):
+        user = await self.get_one(user_id)
+        user.is_active = is_active
+
+        await self.db.commit()
+        await self.db.refresh(user)
         return user

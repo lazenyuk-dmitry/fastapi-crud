@@ -12,7 +12,6 @@ from app.exceptions import (
     OnlyForOwnerError,
     OnlyForAdminError,
     InvalidCredentialsError,
-    InvalidTokenError
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -29,8 +28,6 @@ async def get_current_user(
         email: str = payload.get("sub")
         user = await user_service.get_by_email(email)
 
-        if email is None:
-            raise InvalidTokenError()
         return user
     except Exception:
         raise InvalidCredentialsError()
