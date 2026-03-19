@@ -1,18 +1,26 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
+from enum import Enum
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, Annotated
+
+UserName = Annotated[str, Field(..., min_length=2, max_length=50)]
+UserPassword = Annotated[str, Field(min_length=8)]
+
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    USER = "user"
 
 class UserBase(BaseModel):
-    name: str
+    name: UserName
     email: EmailStr
-    role: str = "user"
+    role: UserRole = UserRole.USER
 
 class UserCreate(UserBase):
-    password: str
+    password: UserPassword
 
-class UserUpdate(BaseModel):
-    name: Optional[str] = None
+class UserUpdate(UserBase):
+    name: Optional[UserName] = None
     email: Optional[EmailStr] = None
-    role: Optional[str] = None
+    role: Optional[UserRole] = None
 
 class User(UserBase):
     id: int

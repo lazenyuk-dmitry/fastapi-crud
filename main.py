@@ -8,6 +8,7 @@ from fastapi import Depends
 from app.dependencies import get_user_service, admin_only, admin_or_owner
 from fastapi.security import OAuth2PasswordRequestForm
 from app.auth import AuthHandler
+from app.exeptions import UserAlreadyExistsError
 
 app = FastAPI(title="User Service API")
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
@@ -16,6 +17,13 @@ UserServiceDep = Annotated[UserService, Depends(get_user_service)]
 async def lifespan(app: FastAPI):
     yield
     await engine.dispose()
+
+@app.exception_handler(UserAlreadyExistsError)
+async def user_exists_handler(request, exc):
+    raise HTTPException(
+        status_code=400,
+        detail = "Email already registered",
+    )
 
 @app.post("/users", response_model=User)
 async def create_user(user_data: UserCreate, user_service: UserServiceDep):

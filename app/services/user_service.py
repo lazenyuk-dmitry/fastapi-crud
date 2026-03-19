@@ -3,6 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import UserORM
 from app.schemas import UserCreate, UserUpdate
 from app.auth import AuthHandler
+from sqlalchemy.exc import IntegrityError
+from app.exeptions import UserAlreadyExistsError
 
 class UserService:
     def __init__(self, db: AsyncSession):
@@ -13,19 +15,23 @@ class UserService:
         return result.scalars().all()
 
     async def create(self, user_data: UserCreate):
-        hashed_pwd = AuthHandler.get_password_hash(user_data.password)
+        try:
+            hashed_pwd = AuthHandler.get_password_hash(user_data.password)
 
-        new_user = UserORM(
-            name=user_data.name,
-            email=user_data.email,
-            role=user_data.role,
-            hashed_password=hashed_pwd
-        )
+            new_user = UserORM(
+                name=user_data.name,
+                email=user_data.email,
+                role=user_data.role,
+                hashed_password=hashed_pwd
+            )
 
-        self.db.add(new_user)
-        await self.db.commit()
-        await self.db.refresh(new_user)
-        return new_user
+            self.db.add(new_user)
+            await self.db.commit()
+            await self.db.refresh(new_user)
+            return new_user
+        except IntegrityError:
+            await self.db.rollback()
+            raise UserAlreadyExistsError()
 
     async def get_one(self, user_id: int):
         result = await self.db.execute(select(UserORM).where(UserORM.id == user_id))
